@@ -1,23 +1,32 @@
 const express = require('express');
+const { verifySignUp, authJwt } = require("../middlewares");
+const bcrypt = require("bcryptjs");
 const userSchema = require('../models/user');
 
 const router = express.Router();
 
 // create user
-router.post('/users', (req, res) => {
-  const user = userSchema(req.body);
+router.post('/users', [authJwt.verifyToken], [
+  verifySignUp.checkDuplicateUsernameOrEmail,
+  verifySignUp.checkRolesExisted
+], (req, res) => {
+  const user = new userSchema({
+    ...req.body,
+    password: bcrypt.hashSync(req.body.password, 8)
+  });
   user
     .save()
     .then((data) => res.json(data))
-    .catch((error) => res.json({
+    .catch((error) => res.status(500).json({
       message: error
     }));
 });
 
 //get all users
-router.get('/users', (req, res) => {
+router.get('/users', [authJwt.verifyToken], (req, res) => {
   userSchema
     .find()
+    .populate("rol", "-__v")
     .then((data) => res.json(data))
     .catch((error) => res.json({
       message: error
@@ -25,7 +34,7 @@ router.get('/users', (req, res) => {
 });
 
 //get one user
-router.get('/users/:id', (req, res) => {
+router.get('/users/:id', [authJwt.verifyToken], (req, res) => {
   const { id } = req.params;
   userSchema
     .findById(id)
@@ -36,11 +45,11 @@ router.get('/users/:id', (req, res) => {
 });
 
 //update one user
-router.put('/users/:id', (req, res) => {
+router.put('/users/:id', [authJwt.verifyToken], (req, res) => {
   const { id } = req.params;
-  const { name, email, document } = req.body;
+  const { name, typeDocument, document, phone, email, rol } = req.body;
   userSchema
-    .updateOne({ _id: id }, { $set: {name, email, document} })
+    .updateOne({ _id: id }, { $set: {name, typeDocument, document, phone, email, rol} })
     .then((data) => res.json(data))
     .catch((error) => res.json({
       message: error
@@ -48,11 +57,10 @@ router.put('/users/:id', (req, res) => {
 });
 
 //delete one user
-router.delete('/users/:id', (req, res) => {
+router.delete('/users/:id', [authJwt.verifyToken], (req, res) => {
   const { id } = req.params;
-  const { name, email, document } = req.body;
   userSchema
-    .updateOne({ _id: id })
+    .deleteOne({ _id: id })
     .then((data) => res.json(data))
     .catch((error) => res.json({
       message: error

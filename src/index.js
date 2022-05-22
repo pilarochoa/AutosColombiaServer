@@ -1,13 +1,35 @@
 const express = require('express');
 const mongoose = require('mongoose');
+const cors = require('cors');
 require('dotenv').config();
-const userRoutes = require('./routes/userRoutes')
+const userRoutes = require('./routes/userRoutes');
+const roleRoutes = require('./routes/roleRoutes');
+const authRoutes = require('./routes/auth.routes');
+const menuRoutes = require('./routes/menuRoutes');
+const cellRoutes = require('./routes/cell');
+const cellStatusRoutes = require('./routes/cellStatusRoutes');
+const zoneRoutes = require('./routes/zoneRoutes');
+const customerRoutes = require('./routes/customerRoutes');
+const typeVehicleRoutes = require('./routes/typeVehicleRoutes');
+const registerRoutes = require('./routes/registerRoutes');
 
 const app = express();
 
 //middleware
-app.user(express.json());
+app.use(express.json());
+app.use(cors({
+  origin: '*'
+}));
 app.use('/api', userRoutes);
+app.use('/api', roleRoutes);
+app.use('/api', authRoutes);
+app.use('/api', menuRoutes);
+app.use('/api', cellRoutes);
+app.use('/api', cellStatusRoutes);
+app.use('/api', zoneRoutes);
+app.use('/api', customerRoutes);
+app.use('/api', typeVehicleRoutes);
+app.use('/api', registerRoutes);
 
 //mongo db conection
 mongoose
