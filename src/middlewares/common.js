@@ -10,7 +10,8 @@ verifyKeyMenu = (req, res, next) => {
       res.status(500).send({ message: err });
       return;
     }
-    if (menus) {
+    console.log(menus);
+    if (menus && menus.length > 0) {
       if (id) {
         for (let i = 0; i < menus.length; i++) {
         if (menus[i]._id.toString() === id) {

@@ -1,6 +1,8 @@
 const express = require('express');
 const { authJwt } = require("../middlewares");
 const registerSchema = require('../models/register');
+const Cell = require('../models/cell');
+const CellStatus = require('../models/cellStatus');
 
 const router = express.Router();
 
@@ -9,7 +11,31 @@ router.post('/register', [authJwt.verifyToken], (req, res) => {
   const register = registerSchema(req.body);
   register
     .save()
-    .then((data) => res.json(data))
+    .then((data) => {
+      if (data) {
+        CellStatus
+          .findOne({
+            available: 'N'
+          })
+          .then((cellStatus) => {
+            if (cellStatus) {
+              Cell
+              .updateOne({ _id: data.cell.toString() }, { $set: {cellStatus: cellStatus._id.toString()} })
+              .catch((error) => {
+                res.json({
+                  message: error
+                })
+              });
+            }
+            res.json(data);
+          })
+          .catch((error) => {
+            res.json({
+              message: error
+            })
+          });
+      }
+    })
     .catch((error) => res.json({
       message: error
     }));
@@ -19,6 +45,11 @@ router.post('/register', [authJwt.verifyToken], (req, res) => {
 router.get('/register', [authJwt.verifyToken], (req, res) => {
   registerSchema
     .find()
+    .populate("typeVehicle", "-__v")
+    .populate("userEnter", "-__v")
+    .populate("userRemove", "-__v")
+    .populate("cell", "-__v")
+    .populate("customer", "-__v")
     .then((data) => res.json(data))
     .catch((error) => res.json({
       message: error

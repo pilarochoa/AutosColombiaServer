@@ -1,6 +1,7 @@
 const express = require('express');
 const { authJwt, common } = require("../middlewares");
 const cellSchema = require('../models/cell');
+const CellStatus = require('../models/cellStatus');
 
 const router = express.Router();
 
@@ -22,6 +23,31 @@ router.get('/cell', [authJwt.verifyToken], (req, res) => {
     .populate("zone", "-__v")
     .populate("cellStatus", "-__v")
     .then((data) => res.json(data))
+    .catch((error) => {
+      console.log('error == ', error)
+      res.json({
+        message: error
+      })
+    });
+});
+
+//get all cells avaibles
+router.get('/cell/available', [authJwt.verifyToken], (req, res) => {
+  cellSchema
+    .find()
+    .populate("zone", "-__v")
+    .populate("cellStatus", "-__v")
+    .then((cells) => {
+      const data = [];
+      if (cells && cells.length > 0) {
+        for (let i = 0; i < cells.length; i++) {
+          if (cells[i].cellStatus.available === 'S') {
+            data.push(cells[i]);
+          }
+        }
+      }
+      res.json(data)
+    })
     .catch((error) => {
       console.log('error == ', error)
       res.json({
