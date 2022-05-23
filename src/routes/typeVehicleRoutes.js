@@ -39,9 +39,9 @@ router.get('/typeVehicle/:id', [authJwt.verifyToken], (req, res) => {
 //update one typeVehicle
 router.put('/typeVehicle/:id', [authJwt.verifyToken], (req, res) => {
   const { id } = req.params;
-  const { name, email, document } = req.body;
+  const { name, tafifaMes, tafifaDia } = req.body;
   typeVehicleSchema
-    .updateOne({ _id: id }, { $set: {name, email, document} })
+    .updateOne({ _id: id }, { $set: {name, tafifaMes, tafifaDia} })
     .then((data) => res.json(data))
     .catch((error) => res.json({
       message: error

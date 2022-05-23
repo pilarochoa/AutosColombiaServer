@@ -39,9 +39,9 @@ router.get('/register/:id', [authJwt.verifyToken], (req, res) => {
 //update one register
 router.put('/register/:id', [authJwt.verifyToken], (req, res) => {
   const { id } = req.params;
-  const { name, email, document } = req.body;
+  const { placa, typeVehicle, userEnter, userRemove, cell, customer, dateInicio, dateEnd } = req.body;
   registerSchema
-    .updateOne({ _id: id }, { $set: {name, email, document} })
+    .updateOne({ _id: id }, { $set: {placa, typeVehicle, userEnter, userRemove, cell, customer, dateInicio, dateEnd} })
     .then((data) => res.json(data))
     .catch((error) => res.json({
       message: error

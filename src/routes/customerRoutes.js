@@ -39,9 +39,9 @@ router.get('/customer/:id', [authJwt.verifyToken], (req, res) => {
 //update one customer
 router.put('/customer/:id', [authJwt.verifyToken], (req, res) => {
   const { id } = req.params;
-  const { name, email, document } = req.body;
+  const { name, typeDocument, document, phone, email } = req.body;
   customerSchema
-    .updateOne({ _id: id }, { $set: {name, email, document} })
+    .updateOne({ _id: id }, { $set: {name, typeDocument, document, phone, email} })
     .then((data) => res.json(data))
     .catch((error) => res.json({
       message: error

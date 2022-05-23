@@ -39,9 +39,9 @@ router.get('/cellStatus/:id', [authJwt.verifyToken], (req, res) => {
 //update one cellStatus
 router.put('/cellStatus/:id', [authJwt.verifyToken], (req, res) => {
   const { id } = req.params;
-  const { name, email, document } = req.body;
+  const { name, available, color } = req.body;
   cellStatusSchema
-    .updateOne({ _id: id }, { $set: {name, email, document} })
+    .updateOne({ _id: id }, { $set: {name, available, color} })
     .then((data) => res.json(data))
     .catch((error) => res.json({
       message: error

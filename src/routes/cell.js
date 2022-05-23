@@ -1,11 +1,11 @@
 const express = require('express');
-const { authJwt } = require("../middlewares");
+const { authJwt, common } = require("../middlewares");
 const cellSchema = require('../models/cell');
 
 const router = express.Router();
 
 // create cell
-router.post('/cell', [authJwt.verifyToken], (req, res) => {
+router.post('/cell', [authJwt.verifyToken, common.verifyKeyCell], (req, res) => {
   const cell = cellSchema(req.body);
   cell
     .save()
@@ -19,10 +19,15 @@ router.post('/cell', [authJwt.verifyToken], (req, res) => {
 router.get('/cell', [authJwt.verifyToken], (req, res) => {
   cellSchema
     .find()
+    .populate("zone", "-__v")
+    .populate("cellStatus", "-__v")
     .then((data) => res.json(data))
-    .catch((error) => res.json({
-      message: error
-    }));
+    .catch((error) => {
+      console.log('error == ', error)
+      res.json({
+        message: error
+      })
+    });
 });
 
 //get one cell
@@ -37,11 +42,11 @@ router.get('/cell/:id', [authJwt.verifyToken], (req, res) => {
 });
 
 //update one cell
-router.put('/cell/:id', [authJwt.verifyToken], (req, res) => {
+router.put('/cell/:id', [authJwt.verifyToken, common.verifyKeyCell], (req, res) => {
   const { id } = req.params;
-  const { name, email, document } = req.body;
+  const { name, zone, cellStatus } = req.body;
   cellSchema
-    .updateOne({ _id: id }, { $set: {name, email, document} })
+    .updateOne({ _id: id }, { $set: {name, zone, cellStatus} })
     .then((data) => res.json(data))
     .catch((error) => res.json({
       message: error

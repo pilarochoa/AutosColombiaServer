@@ -39,9 +39,9 @@ router.get('/zone/:id', [authJwt.verifyToken], (req, res) => {
 //update one zone
 router.put('/zone/:id', [authJwt.verifyToken], (req, res) => {
   const { id } = req.params;
-  const { name, email, document } = req.body;
+  const { name } = req.body;
   zoneSchema
-    .updateOne({ _id: id }, { $set: {name, email, document} })
+    .updateOne({ _id: id }, { $set: {name} })
     .then((data) => res.json(data))
     .catch((error) => res.json({
       message: error

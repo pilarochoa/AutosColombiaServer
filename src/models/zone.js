@@ -7,4 +7,4 @@ const zoneSchema = mongoose.Schema({
   }
 });
 
-module.exports = mongoose.model('Zona', zoneSchema);
+module.exports = mongoose.model('Zone', zoneSchema);
