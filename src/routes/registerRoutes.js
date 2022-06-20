@@ -67,6 +67,17 @@ router.get('/register/:id', [authJwt.verifyToken], (req, res) => {
     }));
 });
 
+//get one register by placa
+router.get('/register/placa/:placa', [authJwt.verifyToken], (req, res) => {
+  const { placa } = req.params;
+  registerSchema
+    .findOne({ placa: placa})
+    .then((data) => res.json(data))
+    .catch((error) => res.json({
+      message: error
+    }));
+});
+
 //update one register
 router.put('/register/:id', [authJwt.verifyToken], (req, res) => {
   const { id } = req.params;

@@ -12,6 +12,7 @@ const zoneRoutes = require('./routes/zoneRoutes');
 const customerRoutes = require('./routes/customerRoutes');
 const typeVehicleRoutes = require('./routes/typeVehicleRoutes');
 const registerRoutes = require('./routes/registerRoutes');
+const paymentRoutes = require('./routes/paymentRoutes');
 
 const app = express();
 
@@ -30,6 +31,7 @@ app.use('/api', zoneRoutes);
 app.use('/api', customerRoutes);
 app.use('/api', typeVehicleRoutes);
 app.use('/api', registerRoutes);
+app.use('/api', paymentRoutes);
 
 //mongo db conection
 mongoose
